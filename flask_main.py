@@ -17,6 +17,6 @@ def resturant_route():
 
     return RestaurantService().get_restaurant_in_area(lat=lat, long=long,num_results=num_results)
 
-#blah asd s
+#yeet
 if __name__ == '__main__':
     app.run()
