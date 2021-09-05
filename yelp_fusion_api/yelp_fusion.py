@@ -50,7 +50,7 @@ class YelpFusion:
             restaurant_list.append(Restaurant(
                 current_res['id'],
                 current_res['name'],
-                current_res['categories'][1]['title'],
+                current_res['categories'][0]['title'],
                 current_res['rating'],
                 current_res['image_url']))
             
