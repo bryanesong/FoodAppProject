@@ -56,13 +56,17 @@ class YelpFusion:
         # convert to json
         res = response.text
         current_res = json.loads(res)
-        return Restaurant(
-            current_res['id'],
-            current_res['name'],
-            current_res['categories'],
-            current_res['rating'],
-            current_res['image_url'],
-            current_res['review_count'],
-            current_res['price'] if "price" in current_res.keys() else "")
+        # test for invalid ID
+        if 'id' in current_res.keys():
+            return Restaurant(
+                current_res['id'],
+                current_res['name'],
+                current_res['categories'],
+                current_res['rating'],
+                current_res['image_url'],
+                current_res['review_count'],
+                current_res['price'] if "price" in current_res.keys() else "")
+        else:
+            return None
         
         

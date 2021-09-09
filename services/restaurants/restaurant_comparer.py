@@ -17,81 +17,59 @@ class RestaurantComparer:
             "Authorization": f"Bearer {API_TOKEN}"
         }
         # finds restaurant info
+        
         restInfo1 = YelpFusion().find_restaurant_by_id(id=rest1, headers=headers)
         restInfo2 = YelpFusion().find_restaurant_by_id(id=rest2, headers=headers)
+        
+        # test for invalid IDs
+        if None == restInfo1 and restInfo2:
+            return "errorMessage: One or more restaurant IDs are invalid"
 
         similarity_score = 0
         max_score = 0
 
-        # compares price, number of reviews, rating, and cuisine type
-        temp_similarity_score, temp_max_score = self._compare_price(rest1 = restInfo1, rest2 = restInfo2)
-        similarity_score += temp_similarity_score
-        max_score += temp_max_score
-        print("similarity score: " + str(temp_similarity_score) + " max score: " + str(temp_max_score))
-
-        temp_similarity_score, temp_max_score = self._compare_review_count(rest1 = restInfo1, rest2 = restInfo2)
-        similarity_score += temp_similarity_score
-        max_score += temp_max_score
-        print("similarity score: " + str(temp_similarity_score) + " max score: " + str(temp_max_score))
-
-        temp_similarity_score, temp_max_score = self._compare_rating(rest1 = restInfo1, rest2 = restInfo2)
-        similarity_score += temp_similarity_score
-        max_score += temp_max_score
-        print("similarity score: " + str(temp_similarity_score) + " max score: " + str(temp_max_score))
-
-        temp_similarity_score, temp_max_score = self._compare_cuisine_type(rest1 = restInfo1, rest2 = restInfo2)
-        similarity_score += temp_similarity_score
-        max_score += temp_max_score
-        print("similarity score: " + str(temp_similarity_score) + " max score: " + str(temp_max_score))
-
-        return str(similarity_score/max_score)
-
-    def _compare_price(self, rest1: Restaurant, rest2: Restaurant):
-        max_score = 100
-        # price difference range is 0-3
-        price_difference = abs(len(rest1.price) - len(rest2.price))
-        if "" != rest1.price and rest2.price:
-            print("price 1: " + rest1.price + " price 2: " + rest2.price)
-            # return score and max score possible
-            return max_score - (33 * price_difference), max_score
-        else:
-            # if unable to factor in price, return a score of 0 and a max score of 0
-            return 0, 0
-
-    def _compare_review_count(self, rest1: Restaurant, rest2: Restaurant):
-        max_score = 20
-        
-        # ensure restaurant has been rated
-        if 0 != rest1.review_count and rest2.review_count:
-            print("review count 1: " + str(rest1.review_count) + " review count 2: " + str(rest2.review_count))
-            # review count similarity will be based on percent similarity
-            percent_similar = self._find_percent_similar(rest1.review_count, rest2.review_count)
-            return max_score * percent_similar, max_score
-
-        else:
-            return 0, 0
+        # cuisine, rating, review count, price
+        factor_weight = [100, 100, 100, 40, 100]
+        for x in range(3, 7):
+            temp_similarity_score, temp_max_score = self._compare_CPRR(rest1 = restInfo1.get_by_index(x), rest2 = restInfo2.get_by_index(x), max_score=factor_weight[x-3])
+            similarity_score += temp_similarity_score
+            max_score += temp_max_score
+            print(str(temp_similarity_score) + " out of " + str(temp_max_score))
+        print("final similarity score: " + str(similarity_score) + " out of " + str(max_score) + " max, or " + str(round(similarity_score/max_score, 4)))
     
-    def _compare_rating(self, rest1: Restaurant, rest2: Restaurant):
-        max_score = 100
-        
-        # ensure restaurant has been rated
-        if 0 != rest1.rating and rest2.rating:
-            print("rating 1: " + str(rest1.rating) + " rating 2: " + str(rest2.rating))
-            # rating similarity will be based on percent similarity
-            percent_similar = self._find_percent_similar(rest1.rating, rest2.rating)
-            return max_score * percent_similar, max_score
+        return str(round(similarity_score/max_score, 4))
 
-        else:
+    # compare cuisine, price, review count, and rating
+    def _compare_CPRR(self, rest1, rest2, max_score: int):
+        print(str(rest1) + " compared to " + str(rest2))
+        # ensures values are valid
+        if None == rest1 or None == rest2 or 0 == rest1 or 0 == rest2 or rest1 == "" or rest2 == "":
+            print("missing restaurant dict info (not fatal)")
             return 0, 0
 
-    def _compare_cuisine_type(self, rest1: Restaurant, rest2: Restaurant):
-        max_score = 100
+        # deals with price, review count, and rating
+        if (float == type(rest1) == type(rest2)) or (str == type(rest1) == type(rest2) or (int == type(rest1) == type(rest2))):
+            # rating and review count will be integers. convert $ to integers as well.
+            if str == type(rest1) and type(rest2):
+                rest1 = len(rest1)
+                rest2 = len(rest2)
+            # find percent difference
+            percent_similar = self._find_percent_similar(rest1, rest2)
+            # return score and max score possible
+            return max_score * percent_similar, max_score
+        # deals with cuisines
+        elif list == type(rest1) == type(rest2):
+            return self._compare_cuisine_type(rest1=rest1, rest2=rest2, max_score=max_score)
 
+        # catch all. if rest1 and rest2 types are not the same
+        return 0, 0
+
+    def _compare_cuisine_type(self, rest1: dict, rest2: dict, max_score: int):
         #converts dictionary of cuisines to word lists
-        cuisine_list1 = self._to_cuisine_list(restaurant=rest1)
-        cuisine_list2 = self._to_cuisine_list(restaurant=rest2)
+        cuisine_list1 = self._to_cuisine_list(rest_dict=rest1)
+        cuisine_list2 = self._to_cuisine_list(rest_dict=rest2)
 
-        if 0 is not len(cuisine_list1) and len(cuisine_list2):
+        if 0 != len(cuisine_list1) and 0 != len(cuisine_list2):
             # compares words in lists if neither list is empty
             percent_similar = self._compare_cuisine_lists(cuisine_list1 = cuisine_list1, cuisine_list2 = cuisine_list2)
 
@@ -107,9 +85,9 @@ class RestaurantComparer:
             percent_similar = 1/percent_similar
         return percent_similar
 
-    def _to_cuisine_list(self, restaurant: Restaurant):
+    def _to_cuisine_list(self, rest_dict: dict):
         cuisine_list = []
-        for cuisine in restaurant.cuisine:
+        for cuisine in rest_dict:
             cuisine_list + re.split(" |/", cuisine["alias"])
             cuisine_list.append(cuisine["alias"])
         print(cuisine_list)
@@ -139,5 +117,5 @@ class RestaurantComparer:
                 w2 = wordnet.synset(word2 + ".n.01")
                 similarity_score += w1.wup_similarity(w2)
                 max_similarity_score += 1
-        return (similarity_score/max_similarity_score) if max_similarity_score is not 0 else 0
+        return (similarity_score/max_similarity_score) if max_similarity_score != 0 else 0
 

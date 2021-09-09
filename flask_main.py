@@ -19,12 +19,16 @@ def resturant_route():
     return RestaurantService().get_restaurant_in_area(lat=lat, long=long,num_results=num_results)
 
 # compares 2 restaurants
-@app.route("/restaurants/compare", methods=['GET', 'POST'])
+@app.route("/restaurants/compare", methods=['GET'])
 def compare_route():
-    rest1 = request.args.get('rest1')
-    rest2 = request.args.get('rest2')
-    
-    return RestaurantComparer().compare_restaurants(rest1=rest1, rest2=rest2)
+    # test for missing IDs
+    if None != request.args.get('rest1') and None != request.args.get('rest2'):
+        rest1 = request.args.get('rest1')
+        rest2 = request.args.get('rest2')
+        return RestaurantComparer().compare_restaurants(rest1=rest1, rest2=rest2)
+
+    else:
+        return "errorMessage: One or more restaurant IDs are missing"
 
 #yeet
 if __name__ == '__main__':
