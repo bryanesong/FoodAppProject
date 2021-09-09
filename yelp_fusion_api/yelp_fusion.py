@@ -36,28 +36,36 @@ class YelpFusion:
         current_food_item = 0
         # make calls to each id on the list to get detailed information
         for food_place_id in food_place_id_list:
-            url = "https://api.yelp.com/v3/businesses/" + food_place_id
-
-            # request utlizes same header as before because of same auth token
-            response = requests.get(url, headers=headers)
-
-            # convert to json
-            res = response.text
-            current_res = json.loads(res)
-
+            # iterate counter for restaurant pricing
+            current_food_item = current_food_item + 1
+            # restaurant_list.append(Restaurant(place['name'],len(place['price']), ))#name, price, cuisine, rating)
+            # print(response.status_code)
+            print(food_place_id)
             restaurant_list.append(
-                Restaurant(
-                    current_res["id"],
-                    current_res["name"],
-                    current_res["categories"][0]["title"],
-                    current_res["rating"],
-                    current_res["image_url"],
-                )
+                self.find_restaurant_by_id(id=food_place_id, headers=headers)
             )
 
-            # iterate counter for restaurant pricing
-            # current_food_item = current_food_item+ 1
-            print(current_res)
-        # restaurant_list.append(Restaurant(place['name'],len(place['price']), ))#name, price, cusine, rating)
-        # print(response.status_code)
         return restaurant_list
+
+    def find_restaurant_by_id(self, id: str, headers: dict):
+        url = "https://api.yelp.com/v3/businesses/" + id
+
+        # request utlizes same header as before because of same auth token
+        response = requests.get(url, headers=headers)
+
+        # convert to json
+        res = response.text
+        current_res = json.loads(res)
+        # test for invalid ID
+        if "id" in current_res.keys():
+            return Restaurant(
+                current_res["id"],
+                current_res["name"],
+                current_res["categories"],
+                current_res["rating"],
+                current_res["image_url"],
+                current_res["review_count"],
+                current_res["price"] if "price" in current_res.keys() else "",
+            )
+        else:
+            return None

@@ -1,4 +1,6 @@
 from flask import Flask, request, render_template
+from services.restaurants.restaurant_comparer import RestaurantComparer
+from flask import Flask, request
 from flask_mysqldb import MySQL
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
