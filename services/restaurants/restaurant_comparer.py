@@ -22,7 +22,7 @@ class RestaurantComparer:
         restInfo2 = YelpFusion().find_restaurant_by_id(id=rest2, headers=headers)
         
         # test for invalid IDs
-        if None == restInfo1 and restInfo2:
+        if None == restInfo1 and None == restInfo2:
             return "errorMessage: One or more restaurant IDs are invalid"
 
         similarity_score = 0
