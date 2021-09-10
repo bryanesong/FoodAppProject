@@ -4,6 +4,7 @@ from flask import Flask, request
 from flask_mysqldb import MySQL
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
+from constants import OCEAN_DROPLET_IP, OCEAN_PASSWORD
 
 
 db = SQLAlchemy()
@@ -12,6 +13,9 @@ db = SQLAlchemy()
 def create_app():
     """Construct the core application."""
     app = Flask(__name__)
+    app.config[
+        "SQLALCHEMY_DATABASE_URI"
+    ] = f"mysql://admin:{OCEAN_PASSWORD}@localhost/users_database"
 
     db.init_app(app)
 

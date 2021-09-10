@@ -34,6 +34,11 @@ def create_user():
     return UserAccountService().create_user_account(uuid, username, email)
 
 
+@app.route("/users", methods=["GET"])
+def get_all_users():
+    return UserAccountService().get_all_users()
+
+
 # compares 2 restaurants
 @app.route("/restaurants/compare", methods=["GET"])
 def compare_route():
@@ -45,8 +50,3 @@ def compare_route():
 
     else:
         return "errorMessage: One or more restaurant IDs are missing"
-
-
-@app.route("/users", methods=["GET"])
-def get_all_users():
-    return UserAccountService().get_all_users()
