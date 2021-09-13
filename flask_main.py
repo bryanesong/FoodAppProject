@@ -6,16 +6,15 @@ from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from constants import OCEAN_DROPLET_IP, OCEAN_PASSWORD
 
-
 db = SQLAlchemy()
 
 
 def create_app():
     """Construct the core application."""
     app = Flask(__name__)
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"
-    ] = f"mysql://admin:{OCEAN_PASSWORD}@localhost/users_database"
+    # app.config[
+    #     "SQLALCHEMY_DATABASE_URI"
+    # ] = f"mysql://admin:{OCEAN_PASSWORD}@143.244.183.139/users_database"
 
     db.init_app(app)
 
