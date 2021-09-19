@@ -48,9 +48,9 @@ class RestaurantComparer:
             return 0, 0
 
         # deals with price, review count, and rating
-        if (float == type(rest1) == type(rest2)) or (str == type(rest1) == type(rest2) or (int == type(rest1) == type(rest2))):
+        if (float == type(rest1) == type(rest2)) or (str == type(rest1) == type(rest2)) or (int == type(rest1) == type(rest2)):
             # rating and review count will be integers. convert $ to integers as well.
-            if str == type(rest1) and type(rest2):
+            if str == type(rest1) == type(rest2):
                 rest1 = len(rest1)
                 rest2 = len(rest2)
             # find percent difference
