@@ -19,10 +19,6 @@ class RestaurantComparer:
         restInfo1 = YelpFusion().find_restaurant_by_id(id=rest1, headers=headers)
         restInfo2 = YelpFusion().find_restaurant_by_id(id=rest2, headers=headers)
 
-<<<<<<< HEAD
-        
-=======
->>>>>>> a984710bd1b9da57149a7503e77cee27072c4c44
         # test for invalid IDs
         if None == restInfo1 or None == restInfo2:
             return "errorMessage: One or more restaurant IDs are invalid"
@@ -68,13 +64,9 @@ class RestaurantComparer:
             return 0, 0
 
         # deals with price, review count, and rating
-<<<<<<< HEAD
-        if (float == type(rest1) == type(rest2)) or (str == type(rest1) == type(rest2)) or (int == type(rest1) == type(rest2)):
-=======
         if (float == type(rest1) == type(rest2)) or (
             str == type(rest1) == type(rest2) or (int == type(rest1) == type(rest2))
         ):
->>>>>>> a984710bd1b9da57149a7503e77cee27072c4c44
             # rating and review count will be integers. convert $ to integers as well.
             if str == type(rest1) == type(rest2):
                 rest1 = len(rest1)
