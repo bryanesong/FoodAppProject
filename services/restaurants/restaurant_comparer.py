@@ -20,7 +20,7 @@ class RestaurantComparer:
         restInfo2 = YelpFusion().find_restaurant_by_id(id=rest2, headers=headers)
 
         # test for invalid IDs
-        if None == restInfo1 and None == restInfo2:
+        if None == restInfo1 or None == restInfo2:
             return "errorMessage: One or more restaurant IDs are invalid"
 
         similarity_score = 0
@@ -68,7 +68,7 @@ class RestaurantComparer:
             str == type(rest1) == type(rest2) or (int == type(rest1) == type(rest2))
         ):
             # rating and review count will be integers. convert $ to integers as well.
-            if str == type(rest1) and type(rest2):
+            if str == type(rest1) == type(rest2):
                 rest1 = len(rest1)
                 rest2 = len(rest2)
             # find percent difference
