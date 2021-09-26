@@ -1,3 +1,4 @@
+from services.restaurants.restaurant_find_compare import RestaurantFindCompare
 from flask import request, render_template, make_response, abort, Response
 from datetime import datetime as dt
 from flask import current_app as app
@@ -46,7 +47,24 @@ def compare_route():
     if None != request.args.get("rest1") and None != request.args.get("rest2"):
         rest1 = request.args.get("rest1")
         rest2 = request.args.get("rest2")
-        return RestaurantComparer().compare_restaurants(rest1=rest1, rest2=rest2)
+        return str(RestaurantComparer().compare_restaurants(rest1=rest1, rest2=rest2))
 
     else:
         return "errorMessage: One or more restaurant IDs are missing"
+
+
+# receives longitude and latitude, as well as restaurant id
+# returns list of restaurants, from most compatible to least
+@app.route("/restaurants/search_and_find", methods=["GET"])
+def compare_find_route():
+    if (
+        request.args.get("restaurant") != None
+        and request.args.get("lat") != None
+        and request.args.get("long") != None
+    ):
+        return RestaurantFindCompare().find_and_compare(
+            lat=request.args.get("lat"),
+            long=request.args.get("long"),
+            restaurant=request.args.get("restaurant"),
+        )
+    return "errorMessage: One or more parameters are missing for compare_find_route"

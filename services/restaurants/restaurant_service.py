@@ -10,12 +10,15 @@ class RestaurantService:
         self.curr_resturant = None
 
     # takes in lat/long, radius(miles)
-    def get_restaurant_in_area(self, lat, long, num_results):
-        return self._serialize_get_restaurants(
-            YelpFusion().get_restaurants_in_area(lat, long, num_results)
-        )
+    def get_restaurant_in_area(self, lat, long, num_results, serialize=True):
+        if serialize:
+            return self.serialize_get_restaurants(
+                YelpFusion().get_restaurants_in_area(lat, long, num_results)
+            )
+        else:
+            return YelpFusion().get_restaurants_in_area(lat, long, num_results)
 
-    def _serialize_get_restaurants(self, restaurants_list: list[Restaurant]):
+    def serialize_get_restaurants(self, restaurants_list: list[Restaurant]):
         counter = 0
         temp = {}
         for restaurant in restaurants_list:

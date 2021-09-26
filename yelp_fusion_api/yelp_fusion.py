@@ -20,6 +20,10 @@ class YelpFusion:
 
         # convert to json
         res_as_json = json.loads(res)
+
+        # test if no nearby businesses are found
+        if not "businesses" in res_as_json.keys():
+            return "errorMessage: no nearby businesses found"
         food_places = res_as_json["businesses"]
 
         # build list of resturant objects
@@ -68,4 +72,4 @@ class YelpFusion:
                 current_res["price"] if "price" in current_res.keys() else "",
             )
         else:
-            return None
+            return "errorMessage: Invalid restaurant ID"

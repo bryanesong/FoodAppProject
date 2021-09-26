@@ -4,7 +4,8 @@ from flask import Flask, request
 from flask_mysqldb import MySQL
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
-from constants import OCEAN_DROPLET_IP, OCEAN_PASSWORD
+
+# from constants import OCEAN_DROPLET_IP, OCEAN_PASSWORD
 
 db = SQLAlchemy()
 
