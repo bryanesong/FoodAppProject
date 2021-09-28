@@ -8,8 +8,8 @@ class YelpFusion:
     def __init__(self):
         pass
 
-    def get_restaurants_in_area(self, lat, long, num_results):
-        url = f"https://api.yelp.com/v3/businesses/search?term=food&latitude={lat}&longitude={long}&limit={num_results}&open_now=True"
+    def get_restaurants_in_area(self, lat, long, results):
+        url = f"https://api.yelp.com/v3/businesses/search?term=food&latitude={lat}&longitude={long}&limit={results}&open_now=True"
 
         headers = {"Authorization": f"Bearer {API_TOKEN}"}
 

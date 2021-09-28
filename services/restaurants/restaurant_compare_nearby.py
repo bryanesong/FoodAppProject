@@ -5,24 +5,25 @@ from services.restaurants.restaurant_service import RestaurantService
 from constants import API_TOKEN
 
 
-class RestaurantFindCompare:
+class RestaurantCompareNearby:
     def __init__(self) -> None:
         pass
 
-    # pre: takes in lattitude, longitude, and restaurant ID
+    # pre: takes in lattitude, longitude, a favorite restaurant's ID, and a number of requested results
     # assumes lat and long are non null, and restaurant is a valid ID
     # returns "no nearby businesses" if no businesses are found
     # post: returns a dictionary of restaurants ordered from least comparable to most comparable, with scores as keys
-    def find_and_compare(self, lat: float, long: float, restaurant: str):
+    def compare_nearby(self, lat: float, long: float, restaurant: str, results: int):
         headers = {"Authorization": f"Bearer {API_TOKEN}"}
         # retrieve info of liked restaurant
         liked_restaurant = YelpFusion().find_restaurant_by_id(
             id=restaurant, headers=headers
         )
-        if liked_restaurant != None:
+        # test for invalid restaurant
+        if liked_restaurant != None and type(liked_restaurant) != str:
             # retrieve list of nearbly restaurants
             nearby_restaurants = RestaurantService().get_restaurant_in_area(
-                lat=lat, long=long, num_results=10, serialize=False
+                lat=lat, long=long, results=results, serialize=False
             )
             # if error message is returned, return again
             if type(nearby_restaurants) == str:
