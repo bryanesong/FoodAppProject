@@ -1,3 +1,4 @@
+from services.restaurants.restaurant_compare_nearby import RestaurantCompareNearby
 from flask import request, render_template, make_response, abort, Response
 from datetime import datetime as dt
 from flask import current_app as app
@@ -11,12 +12,12 @@ from services.restaurants.restaurant_comparer import RestaurantComparer
 def resturant_route():
     lat = request.args.get("lat")
     long = request.args.get("long")
-    num_results = request.args.get("num_results")
+    results = request.args.get("results")
     # 47.5855941
     # -122.0690723
 
     return RestaurantService().get_restaurant_in_area(
-        lat=lat, long=long, num_results=num_results
+        lat=lat, long=long, results=results
     )
 
 
@@ -46,7 +47,27 @@ def compare_route():
     if None != request.args.get("rest1") and None != request.args.get("rest2"):
         rest1 = request.args.get("rest1")
         rest2 = request.args.get("rest2")
-        return RestaurantComparer().compare_restaurants(rest1=rest1, rest2=rest2)
+        return str(RestaurantComparer().compare_restaurants(rest1=rest1, rest2=rest2))
 
     else:
         return "errorMessage: One or more restaurant IDs are missing"
+
+
+# receives longitude and latitude, liked restaurant id, and number of results
+# returns list of restaurants, from most compatible to least
+@app.route("/restaurants/compare-nearby", methods=["GET"])
+def compare_nearby_route():
+    if (
+        request.args.get("restaurant") != None
+        and request.args.get("lat") != None
+        and request.args.get("long") != None
+        and request.args.get("results") != None
+        and str(request.args.get("results")).isdigit()
+    ):
+        return RestaurantCompareNearby().compare_nearby(
+            lat=request.args.get("lat"),
+            long=request.args.get("long"),
+            restaurant=request.args.get("restaurant"),
+            results=request.args.get("results"),
+        )
+    return "errorMessage: One or more parameters are missing or invalid for compare-nearby-route"

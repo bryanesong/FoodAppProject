@@ -23,13 +23,21 @@ class RestaurantComparer:
         if None == restInfo1 or None == restInfo2:
             return "errorMessage: One or more restaurant IDs are invalid"
 
+        return self.compute_scores(restInfo1=restInfo1, restInfo2=restInfo2)
+
+    # takes in two restaurant objects, returns similarity score
+    def compute_scores(self, restInfo1: Restaurant, restInfo2: Restaurant):
         similarity_score = 0
         max_score = 0
 
         # cuisine, rating, review count, price
         factor_weight = [100, 100, 100, 40, 100]
         for x in range(3, 7):
-            temp_similarity_score, temp_max_score = self._compare_CPRR(
+            print(str(restInfo1) + " compared to: " + str(restInfo2))
+            (
+                temp_similarity_score,
+                temp_max_score,
+            ) = RestaurantComparer()._compare_CPRR(
                 rest1=restInfo1.get_by_index(x),
                 rest2=restInfo2.get_by_index(x),
                 max_score=factor_weight[x - 3],
@@ -46,7 +54,7 @@ class RestaurantComparer:
             + str(round(similarity_score / max_score, 4))
         )
 
-        return str(round(similarity_score / max_score, 4))
+        return round(similarity_score / max_score, 4)
 
     # compare cuisine, price, review count, and rating
     def _compare_CPRR(self, rest1, rest2, max_score: int):
@@ -119,10 +127,10 @@ class RestaurantComparer:
         english_vocab = set(w.lower() for w in nltk.corpus.words.words())
         # add current word to new_word_list if exists in vocab list
         for word in word_list:
-            if word in english_vocab:
+            if word in list(english_vocab):
                 new_word_list.append(word)
             # remove last letter (hopefully an s) and test again
-            elif word[0:-1] in english_vocab:
+            elif word[-1] == "s" and word[0:-1] in (english_vocab):
                 new_word_list.append(word[0:-1])
         print(new_word_list)
         return new_word_list
